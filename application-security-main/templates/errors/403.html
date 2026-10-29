@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}403 Forbidden - Security Shield{% endblock %}
+
+{% block content %}
+<div class="container-narrow" style="margin: 3rem auto; text-align: center;">
+  <div class="card" style="border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);">
+    <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; border: 1px solid rgba(239, 68, 68, 0.4);">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+
+    <h2 style="font-size: 2rem; color: #f87171; margin-bottom: 0.5rem;">403 Forbidden</h2>
+    <div class="badge badge-danger" style="margin-bottom: 1.25rem;">Security Violation Intercepted</div>
+
+    <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.5rem; line-height: 1.6;">
+      Access to this restricted endpoint requires <strong>Administrative Privileges</strong>. 
+      Your authenticated account role (<code>{{ session.get('role', 'anonymous') }}</code>) lacks sufficient authorization clearance.
+    </p>
+
+    <!-- Demonstration Explanation Box -->
+    <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.75rem; text-align: left; font-size: 0.85rem; border: 1px solid var(--border-color);">
+      <div style="color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.35rem;">🛡️ College Security Demo Insight:</div>
+      <ul style="padding-left: 1.2rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.35rem;">
+        <li>Demonstrates <strong>Role-Based Access Control (RBAC)</strong> enforcement at the controller layer.</li>
+        <li>This unauthorized access event has been written to the <strong>SQLite Security Audit Log</strong> with your username and timestamp.</li>
+        <li>Horizontal and vertical privilege escalation is neutralized.</li>
+      </ul>
+    </div>
+
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <a href="{{ url_for('dashboard') }}" class="btn btn-primary" id="return-dashboard-btn">
+        &larr; Return to Dashboard
+      </a>
+      <form action="{{ url_for('logout') }}" method="POST" style="display: inline;">
+        <button type="submit" class="btn btn-secondary" id="relogin-btn">
+          Switch Account
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - AppSec Shield{% endblock %}
+
+{% block content %}
+<div class="container-narrow" style="margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header" style="text-align: center;">
+      <h2 class="card-title" style="justify-content: center;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-cyan)">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        Secure Authentication
+      </h2>
+      <p class="card-subtitle">Enter your credentials to establish an authenticated session</p>
+    </div>
+
+    <!-- Rapid Demo Autofill Buttons -->
+    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 1.5rem;">
+      <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+        ⚡ 3-Minute Demo Quick-Fill:
+      </div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-demo" onclick="fillDemoCredentials('admin', 'Admin@12345!')" id="autofill-admin-btn">
+          👑 Admin (<span class="badge-mono">admin</span>)
+        </button>
+        <button type="button" class="btn btn-demo" onclick="fillDemoCredentials('johndoe', 'User@12345!')" id="autofill-user-btn">
+          👤 User (<span class="badge-mono">johndoe</span>)
+        </button>
+      </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label class="form-label" for="login-identifier">Username or Email</label>
+        <input 
+          type="text" 
+          id="login-identifier" 
+          name="identifier" 
+          class="form-control" 
+          placeholder="e.g., admin or johndoe" 
+          value="{{ identifier or '' }}" 
+          required 
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <input 
+          type="password" 
+          id="login-password" 
+          name="password" 
+          class="form-control" 
+          placeholder="••••••••••••" 
+          required 
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;" id="login-submit-btn">
+        Authenticate &amp; Open Session
+      </button>
+    </form>
+
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+      Don't have an account? <a href="{{ url_for('register') }}" id="link-to-register">Register new account</a>
+    </div>
+
+    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
+      🔒 <strong>Security Implementation:</strong> Server validates against SQLite using <code>bcrypt.checkpw()</code> constant-time comparison, mitigating timing attacks. Upon authentication, a cryptographically signed HTTP-only cookie session is established.
+    </div>
+  </div>
+</div>
+{% endblock %}

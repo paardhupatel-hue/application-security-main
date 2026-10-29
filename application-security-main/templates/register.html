@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - AppSec Shield{% endblock %}
+
+{% block content %}
+<div class="container-narrow" style="margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header" style="text-align: center;">
+      <h2 class="card-title" style="justify-content: center;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-cyan)">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <line x1="20" y1="8" x2="20" y2="14"></line>
+          <line x1="23" y1="11" x2="17" y2="11"></line>
+        </svg>
+        Account Registration
+      </h2>
+      <p class="card-subtitle">Enforces strict input validation &amp; bcrypt password hashing</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}" id="register-form">
+      <div class="form-group">
+        <label class="form-label" for="reg-username">Username</label>
+        <input 
+          type="text" 
+          id="reg-username" 
+          name="username" 
+          class="form-control" 
+          placeholder="alphanumeric, 3-25 characters" 
+          value="{{ username or '' }}" 
+          required 
+          autocomplete="username"
+        >
+        <div class="form-help">Must be 3-25 alphanumeric characters.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-email">Email Address</label>
+        <input 
+          type="email" 
+          id="reg-email" 
+          name="email" 
+          class="form-control" 
+          placeholder="student@university.edu" 
+          value="{{ email or '' }}" 
+          required 
+          autocomplete="email"
+        >
+        <div class="form-help">Strict RFC regex format validation.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-password">Password</label>
+        <input 
+          type="password" 
+          id="reg-password" 
+          name="password" 
+          class="form-control" 
+          placeholder="Must meet security criteria" 
+          required 
+          autocomplete="new-password"
+        >
+        
+        <!-- Live Strength Meter -->
+        <div class="pw-bar-wrap">
+          <div class="pw-bar" id="pw-bar"></div>
+        </div>
+
+        <!-- Live Password Rules Indicator -->
+        <div class="pw-rules">
+          <div class="pw-rule invalid" id="rule-len">
+            <span class="rule-icon">○</span> At least 8 characters
+          </div>
+          <div class="pw-rule invalid" id="rule-upper">
+            <span class="rule-icon">○</span> At least one uppercase letter (A-Z)
+          </div>
+          <div class="pw-rule invalid" id="rule-lower">
+            <span class="rule-icon">○</span> At least one lowercase letter (a-z)
+          </div>
+          <div class="pw-rule invalid" id="rule-num">
+            <span class="rule-icon">○</span> At least one number (0-9)
+          </div>
+          <div class="pw-rule invalid" id="rule-special">
+            <span class="rule-icon">○</span> At least one special character (!@#$%^&amp;*)
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-confirm-password">Confirm Password</label>
+        <input 
+          type="password" 
+          id="reg-confirm-password" 
+          name="confirm_password" 
+          class="form-control" 
+          placeholder="Re-enter password" 
+          required 
+          autocomplete="new-password"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.25rem;" id="register-submit-btn">
+        Register Secure Account
+      </button>
+    </form>
+
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+      Already registered? <a href="{{ url_for('login') }}">Log in here</a>
+    </div>
+
+    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
+      🛡️ <strong>Storage Guarantee:</strong> Passwords are never stored in plaintext. Passwords are salted with 12 rounds of bcrypt adaptive hashing: <code>$2b$12$...</code> before being committed to SQLite.
+    </div>
+  </div>
+</div>
+{% endblock %}

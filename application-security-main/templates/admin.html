@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Control Center - AppSec Shield{% endblock %}
+
+{% block content %}
+<div class="card-header" style="margin-bottom: 2rem;">
+  <h2 class="card-title" style="font-size: 1.8rem;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#fb7185">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+      <path d="M2 17l10 5 10-5"></path>
+      <path d="M2 12l10 5 10-5"></path>
+    </svg>
+    Administrative Security Operations Center
+  </h2>
+  <p class="card-subtitle">Role-Based Access Control (RBAC) Administration &amp; Real-Time Security Event Logging</p>
+</div>
+
+<!-- Key Security Metrics -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-cyan">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    </div>
+    <div class="stat-meta">
+      <span class="stat-number">{{ total_users }}</span>
+      <span class="stat-label">Total Registered Users</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-rose">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+    </div>
+    <div class="stat-meta">
+      <span class="stat-number">{{ admin_count }}</span>
+      <span class="stat-label">Admin Accounts</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-amber">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+    </div>
+    <div class="stat-meta">
+      <span class="stat-number">{{ incident_count }}</span>
+      <span class="stat-label">Blocked Escalation Attempts</span>
+    </div>
+  </div>
+</div>
+
+<!-- User Management Table -->
+<div class="card" style="margin-bottom: 2rem;">
+  <div class="card-header">
+    <h3 class="card-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-cyan)">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+      </svg>
+      User Accounts &amp; RBAC Role Management
+    </h3>
+    <p class="card-subtitle">Manage registered users, their roles, and privileges</p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="data-table" id="users-table">
+      <thead>
+        <tr>
+          <th>UID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Current Role</th>
+          <th>Registration Date</th>
+          <th style="text-align: right;">RBAC Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="cell-mono">#{{ u['id'] }}</td>
+          <td><strong>{{ u['username'] }}</strong></td>
+          <td>{{ u['email'] }}</td>
+          <td>
+            <span class="badge badge-{{ u['role'] }}">{{ u['role'] }}</span>
+          </td>
+          <td class="cell-mono">{{ u['created_at'] }}</td>
+          <td style="text-align: right;">
+            {% if u['id'] == session['user_id'] %}
+              <span class="badge badge-mono" style="background: rgba(255,255,255,0.06); color: var(--text-muted);">Current User</span>
+            {% else %}
+              <form action="{{ url_for('toggle_role', user_id=u['id']) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-secondary" style="padding: 0.3rem 0.7rem; font-size: 0.8rem;" id="toggle-role-{{ u['id'] }}">
+                  {% if u['role'] == 'admin' %}Demote to User{% else %}Promote to Admin{% endif %}
+                </button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Real-time Security Audit Logs -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-amber)">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+        <polyline points="2 17 12 22 22 17"></polyline>
+        <polyline points="2 12 12 17 22 12"></polyline>
+      </svg>
+      Security Audit &amp; Event Log Stream
+    </h3>
+    <p class="card-subtitle">Real-time defensive surveillance: logins, authorization failures, and privilege changes</p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="data-table" id="audit-log-table">
+      <thead>
+        <tr>
+          <th>Log ID</th>
+          <th>Timestamp</th>
+          <th>Event Type</th>
+          <th>Identity</th>
+          <th>IP Address</th>
+          <th>Audit Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td class="cell-mono">#{{ log['id'] }}</td>
+          <td class="cell-mono">{{ log['timestamp'] }}</td>
+          <td>
+            {% if log['event_type'] == 'UNAUTHORIZED_ACCESS_ATTEMPT' %}
+              <span class="badge badge-danger">403 BLOCKED</span>
+            {% elif log['event_type'] == 'LOGIN_SUCCESS' %}
+              <span class="badge badge-success">LOGIN_OK</span>
+            {% elif log['event_type'] == 'LOGIN_FAILED' %}
+              <span class="badge badge-danger">AUTH_FAIL</span>
+            {% elif log['event_type'] == 'ROLE_UPDATED' %}
+              <span class="badge badge-warning">RBAC_CHANGE</span>
+            {% else %}
+              <span class="badge badge-mono" style="background:rgba(255,255,255,0.08);">{{ log['event_type'] }}</span>
+            {% endif %}
+          </td>
+          <td><strong>{{ log['username'] }}</strong></td>
+          <td class="cell-mono">{{ log['ip_address'] }}</td>
+          <td style="font-size: 0.85rem; max-width: 380px;">{{ log['details'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
